@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodTech Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f3;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .quiz-container {
+      background: white;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    button.option {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button.option.correct {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    button.option.wrong {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #next {
+      margin-top: 20px;
+      padding: 10px 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #certificate {
+      background-color: #fff7e6;
+      border: 2px dashed #d4a017;
+      padding: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container" id="quiz">
+    <h2 id="question">Loading...</h2>
+    <ul>
+      <li><button class="option" onclick="selectAnswer(this)"></button></li>
+      <li><button class="option" onclick="selectAnswer(this)"></button></li>
+      <li><button class="option" onclick="selectAnswer(this)"></button></li>
+      <li><button class="option" onclick="selectAnswer(this)"></button></li>
+    </ul>
+    <button id="next" onclick="loadNextQuestion()">Next</button>
+  </div>
+
+  <div id="result" class="hidden">
+    <h2>🎉 Quiz Completed!</h2>
+    <p id="scoreText"></p>
+    <button onclick="generateCertificate()">Get Certificate</button>
+    <div id="certificate" class="hidden">
+      <h3>🎓 Certificate of Completion</h3>
+      <p>This certifies that <strong>User</strong> has completed the CodTech Quiz Internship on <span id="endDate"></span>.</p>
+    </div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What does HTML stand for?",
+        options: ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Hyper Text Marketing Language", "Hyper Text Markdown Language"],
+        correct: "Hyper Text Markup Language"
+      },
+      {
+        question: "Which company developed JavaScript?",
+        options: ["Microsoft", "Netscape", "Sun Microsystems", "Oracle"],
+        correct: "Netscape"
+      },
+      {
+        question: "Which tag is used to include JavaScript in HTML?",
+        options: ["<js>", "<javascript>", "<script>", "<code>"],
+        correct: "<script>"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      document.getElementById("question").innerText = q.question;
+      const buttons = document.querySelectorAll(".option");
+      buttons.forEach((btn, i) => {
+        btn.innerText = q.options[i];
+        btn.className = "option";
+        btn.disabled = false;
+      });
+    }
+
+    function selectAnswer(btn) {
+      const correct = quizData[currentQuestion].correct;
+      const buttons = document.querySelectorAll(".option");
+
+      buttons.forEach(b => b.disabled = true);
+      if (btn.innerText === correct) {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        buttons.forEach(b => {
+          if (b.innerText === correct) {
+            b.classList.add("correct");
+          }
+        });
+      }
+    }
+
+    function loadNextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quiz").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("scoreText").innerText = Your score: ${score} out of ${quizData.length};
+    }
+
+    function generateCertificate() {
+      const cert = document.getElementById("certificate");
+      const endDate = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById("endDate").innerText = endDate.toLocaleDateString(undefined, options);
+      cert.classList.remove("hidden");
+    }
+
+    window.onload = loadQuestion;
+  </script>
+
+</body>
+</html>
